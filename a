@@ -1,43 +1,62 @@
-from flask import Flask, request, abort
-
-from linebot import (
-    LineBotApi, WebhookHandler
-)
-from linebot.exceptions import (
-    InvalidSignatureError
-)
-from linebot.models import *
-
-app = Flask(__name__)
-
-# Channel Access Token
-line_bot_api = LineBotApi('vg85sYHpxpckpayVMPfTMpheflsBMd3VTVL3YpR+pm4R4+lE1/MfkBJGEYfVEldQvAyFJQk+SlUjzsdBNATtwVOpeUMhJjNpJThn3CqWMeLXTsGqsw4Z+ct7ht6ctoGu9qrNV
-YbC+e3cDPZuBYJ7uwdB04t89/1O/w1cDnyilFU=')
-# Channel Secret
-handler = WebhookHandler('c45857577cbb40b488c8912e4cf514d7')
-
-# 監聽所有來自 /callback 的 Post Request
-@app.route("/callback", methods=['POST'])
-def callback():
-    # get X-Line-Signature header value
-    signature = request.headers['X-Line-Signature']
-    # get request body as text
-    body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
-    # handle webhook body
-    try:
-        handler.handle(body, signature)
-    except InvalidSignatureError:
-        abort(400)
-    return 'OK'
-
-# 處理訊息
-@handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(event.reply_token, message)
-
-import os
-if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+{
+  "size": {
+    "width": 2500,
+    "height": 843
+  },
+  "selected": true,
+  "name": "圖文選單 1",
+  "chatBarText": "查看更多資訊",
+  "areas": [
+    {
+      "bounds": {
+        "x": 8,
+        "y": 80,
+        "width": 539,
+        "height": 686
+      },
+      "action": {
+        "type": "postback",
+        "text": "查看訂單",
+        "data": "action=getOrders"
+      }
+    },
+    {
+      "bounds": {
+        "x": 652,
+        "y": 81,
+        "width": 560,
+        "height": 682
+      },
+      "action": {
+        "type": "uri",
+        "uri": "line://ti/p/@733qxalt"
+      }
+    },
+    {
+      "bounds": {
+        "x": 1302,
+        "y": 76,
+        "width": 520,
+        "height": 682
+      },
+      "action": {
+        "type": "postback",
+        "text": "會員資料",
+        "data": "action=getMemberInfo"
+      }
+    },
+    {
+      "bounds": {
+        "x": 1902,
+        "y": 81,
+        "width": 556,
+        "height": 673
+      },
+      "action": {
+        "type": "postback",
+        "text": "商品資訊",
+        "data": "action=getProducts"
+      }
+    }
+  ]
+}
